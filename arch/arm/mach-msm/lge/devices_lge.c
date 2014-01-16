@@ -36,6 +36,10 @@
 #include <linux/spmi.h>
 #endif
 
+#ifdef CONFIG_KEXEC_HARDBOOT
+#include <asm/kexec.h>
+#endif
+
 
 /* in drivers/staging/android */
 #include "ram_console.h"
@@ -182,11 +186,20 @@ static struct platform_device persistent_trace_device = {
 #endif
 
 #ifdef CONFIG_ANDROID_PERSISTENT_RAM
+#define RAMCONSOLE_PHYS_ADDR 0x7D600000
 static struct persistent_ram_descriptor lge_pram_descs[] = {
 #ifdef CONFIG_ANDROID_RAM_CONSOLE
 	{
 		.name = "ram_console",
+#ifdef CONFIG_KEXEC_HARDBOOT
+                .size = KEXEC_HB_PAGE_ADDR - RAMCONSOLE_PHYS_ADDR,
+        },
+        {
+                .name = "kexec_hb_page",
+                .size = LGE_RAM_CONSOLE_SIZE - (KEXEC_HB_PAGE_ADDR - RAMCONSOLE_PHYS_ADDR),
+#else
 		.size = LGE_RAM_CONSOLE_SIZE,
+#endif
 	},
 #endif
 #ifdef CONFIG_PERSISTENT_TRACER
