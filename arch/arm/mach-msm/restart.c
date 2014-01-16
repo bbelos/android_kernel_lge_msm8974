@@ -301,6 +301,11 @@ void msm_restart(char mode, const char *cmd)
 #ifdef CONFIG_KEXEC_HARDBOOT
 void msm_kexec_hardboot(void)
 {
+#ifdef CONFIG_MSM_DLOAD_MODE
+	/* Do not enter download mode on reboot. */
+	set_dload_mode(0);
+#endif
+
 	/* Set PM8XXX PMIC to reset on power off. */
 	pm8xxx_reset_pwr_off(1);
 
